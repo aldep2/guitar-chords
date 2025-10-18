@@ -20,6 +20,8 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          BASE_PATH: '/guitar-chords/'
         run: npm run build
 
       - name: Upload artifact for GitHub Pages
