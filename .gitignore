@@ -1,0 +1,30 @@
+# Node
+node_modules/
+npm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Vite / build
+dist/
+.vite
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# env
+.env
+.env.local
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# optional
+coverage/
+
+# lockfiles
+package-lock.json
