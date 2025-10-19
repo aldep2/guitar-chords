@@ -1,4 +1,5 @@
 name: Build and Deploy to GitHub Pages
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
@@ -26,6 +27,13 @@ jobs:
         env:
           BASE_PATH: '/guitar-chords/'
         run: npm run build
+
+      - name: Sanity check build output
+        run: |
+          if ! grep -q "index-.*\.js" dist/index.html; then
+            echo "Build output missing bundle reference" >&2
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -59,3 +67,4 @@ jobs:
           clean: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
