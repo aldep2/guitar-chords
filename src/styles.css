@@ -1,9 +1,0 @@
-body{ font-family: system-ui, Arial, sans-serif; padding: 24px; background:#f7f7fb; color:#111}
-.container{ max-width:800px; margin:0 auto }
-.panel{ background:white; padding:12px; border-radius:8px; margin-top:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-.voicing{ display:flex; align-items:center; gap:12px; padding:8px 0 }
-.voicing svg{ width:200px; height:240px }
-.caption{ color:#555; font-size:13px }
-.caption.ok{ color: green }
-.caption.warn{ color: orange }
-.controls select{ padding:6px; margin-left:6px }
