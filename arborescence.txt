@@ -1,0 +1,16 @@
+.
+├── arborescence.txt
+├── .github
+│   └── copilot-instructions.md
+├── index.html
+├── package.json
+├── package-lock.json
+├── README.md
+└── src
+    ├── App.jsx
+    ├── ChordDiagram.jsx
+    ├── chords.js
+    ├── main.jsx
+    └── styles.css
+
+3 directories, 11 files

@@ -1,47 +1,85 @@
-# Guitar Chords Generator
+# Guitar Chords Generator (minimal)
 
-Petit projet React + Vite qui génère et affiche des diagrammes d'accords de guitare.
+Projet minimal React + Vite pour générer et afficher des accords de guitare jazz (voicings 4 notes : maj7, m7, 7, 9, 13, dim7).
 
-Démarrage en local
-------------------
+Pour démarrer :
+
+1. Installer les dépendances :
 
 ```bash
 npm install
+```
+
+2. Lancer le serveur de développement :
+
+```bash
 npm run dev
 ```
 
-Build de production
--------------------
+Le site sera disponible sur http://localhost:5175 (Vite) pendant le développement.
 
-Pour générer la version qui sera publiée sur GitHub Pages (site de projet), on doit construire avec la bonne base :
+Notes :
 
-```bash
-# construit dans dist/ avec la base /guitar-chords/
-BASE_PATH=/guitar-chords/ npm run build
-```
+Notes : l'app est volontairement simple. Je peux ajouter plus de voicings, diagrammes graphiques, ou une API pour sauvegarder des accords.
 
-Déploiement (CI)
------------------
+## Déploiement sur GitHub Pages
 
-Le dépôt inclut un workflow GitHub Actions (`.github/workflows/pages.yml`) qui :
-- installe les dépendances,
-- build le site (avec `BASE_PATH=/guitar-chords/`),
-- vérifie (`sanity check`) que le build contient le bundle,
-- et déploie `dist/` sur la branche `gh-pages`.
+- Un workflow GitHub Actions (`.github/workflows/pages.yml`) est inclus : il build le projet et déploie `dist/` sur GitHub Pages quand tu pousses sur la branche `main`.
+- Pour une page de projet (https://<user>.github.io/<repo>/) le workflow définit `BASE_PATH` sur `/guitar-chords/` et Vite utilisera cette base lors du build.
 
-Déploiement manuel (optionnel)
-------------------------------
-
-Exemple pour pousser `dist/` sur `gh-pages` :
+Build local (avec base pour Pages si nécessaire) :
 
 ```bash
-BASE_PATH=/guitar-chords/ npm run build
-# puis copier dist/ dans la branche gh-pages (worktree)
-git worktree add /tmp/gh-pages origin/gh-pages || git fetch origin gh-pages && git worktree add /tmp/gh-pages origin/gh-pages
-rm -rf /tmp/gh-pages/* && cp -r dist/* /tmp/gh-pages/
-cd /tmp/gh-pages
-git add -A && git commit -m "chore: deploy dist (base /guitar-chords/)" || true
-git push origin HEAD:gh-pages --force
+# pour tester localement la version qui sera publiée sous /guitar-chords/
+export BASE_PATH=/guitar-chords/
+npm run build
+# servir le contenu de dist/ (par ex. avec 'npx serve dist' ou 'npx http-server dist')
+npx serve dist
 ```
 
-Si tu veux que j'ajoute d'autres informations (ex. usage, captures d'écran, licence), dis‑le moi et je l'ajoute.
+Remarque: `vite.config.js` utilise maintenant une base relative par défaut (`'./'`) ce qui permet au site construit de fonctionner
+quand il est servi depuis une sous‑chemin (comme GitHub Pages) ou depuis le système de fichiers. Le workflow CI définit toujours `BASE_PATH`
+sur `/guitar-chords/` pour générer les liens absolus si nécessaire.
+# Guitar Chords Generator (minimal)
+
+Projet minimal React + Vite pour générer et afficher des accords de guitare jazz (voicings 4 notes : maj7, m7, 7, 9, 13, dim7).
+
+Pour démarrer :
+
+1. Installer les dépendances :
+
+```bash
+npm install
+```
+
+2. Lancer le serveur de développement :
+
+```bash
+npm run dev
+```
+
+Le site sera disponible sur http://localhost:5175 (Vite) pendant le développement.
+
+Notes :
+
+Notes : l'app est volontairement simple. Je peux ajouter plus de voicings, diagrammes graphiques, ou une API pour sauvegarder des accords.
+
+## Déploiement sur GitHub Pages
+
+- Un workflow GitHub Actions (`.github/workflows/pages.yml`) est inclus : il build le projet et déploie `dist/` sur GitHub Pages quand tu pousses sur la branche `main`.
+- Pour une page de projet (https://<user>.github.io/<repo>/) le workflow définit `BASE_PATH` sur `/guitar-chords/` et Vite utilisera cette base lors du build.
+
+Build local (avec base pour Pages si nécessaire) :
+
+```bash
+# pour tester localement la version qui sera publiée sous /guitar-chords/
+export BASE_PATH=/guitar-chords/
+npm run build
+# servir le contenu de dist/ (par ex. avec 'npx serve dist' ou 'npx http-server dist')
+npx serve dist
+```
+
+Remarque: `vite.config.js` utilise maintenant une base relative par défaut (`'./'`) ce qui permet au site construit de fonctionner
+quand il est servi depuis une sous‑chemin (comme GitHub Pages) ou depuis le système de fichiers. Le workflow CI définit toujours `BASE_PATH`
+sur `/guitar-chords/` pour générer les liens absolus si nécessaire.
+>>>>>>> restore-src-7a9c1f5
