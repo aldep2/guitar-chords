@@ -6,29 +6,62 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build (or package existing site)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Determine build strategy
+        id: prep
+        run: |
+          if [ -f package.json ]; then
+            echo "has_package=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_package=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Node.js
+        if: steps.prep.outputs.has_package == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
 
-      - name: Install dependencies
-        run: npm install --no-audit --prefer-offline
-
-      - name: Build
+      - name: Install & Build
+        if: steps.prep.outputs.has_package == 'true'
         env:
           BASE_PATH: '/guitar-chords/'
-        run: npm run build
+        run: |
+          npm install --no-audit --prefer-offline
+          npm run build
+
+      - name: Prepare pages-dist from repo if no build
+        if: steps.prep.outputs.has_package == 'false'
+        run: |
+          echo "No package.json, preparing pages-dist from repo root"
+          mkdir -p pages-dist
+          # Prefer dist if already present
+          if [ -d dist ]; then
+            cp -a dist/* pages-dist/
+          else
+            cp -a index.html assets public pages-dist/ 2>/dev/null || true
+          fi
 
       - name: Sanity check build output
         run: |
-          if ! grep -q "index-.*\.js" dist/index.html; then
-            echo "Build output missing bundle reference" >&2
+          if [ -d dist ]; then
+            file=dist/index.html
+          else
+            file=pages-dist/index.html
+          fi
+          if [ ! -f "$file" ]; then
+            echo "Missing index.html in build output ($file)" >&2
+            ls -la
+            exit 1
+          fi
+          if ! grep -q "index-.*\\.js" "$file" && ! grep -q "assets/" "$file"; then
+            echo "Build output seems not to contain expected asset references" >&2
+            cat "$file"
             exit 1
           fi
 
@@ -36,7 +69,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pages-dist
-          path: ./dist
+          path: |
+            ./dist
+            ./pages-dist
 
   deploy:
     name: Deploy
