@@ -85,6 +85,29 @@ export function getChordNotes(root, type='maj7'){
   return intervals.slice(0,4).map(interval => SEMITONES[(i + interval)%12])
 }
 
+// return a degree label for a given note relative to root
+export function getDegreeLabel(root, note){
+  const r = indexOf(root)
+  const n = indexOf(note)
+  if(r === -1 || n === -1) return ''
+  const delta = (n - r + 12) % 12
+  const map = {
+    0: 'T',
+    1: 'b9',
+    2: '2',
+    3: 'b3',
+    4: '3',
+    5: '4',
+    6: 'b5',
+    7: '5',
+    8: '#5',
+    9: '6',
+    10: 'b7',
+    11: '7'
+  }
+  return map[delta] || ''
+}
+
 // Default voicings for several chord types (simple, common shapes)
 const DEFAULT_VOICINGS = {
   'maj7': {
@@ -187,9 +210,8 @@ export function getOpenVoicings(root, type='maj7'){
   for(const v of allCandidates){
     const rawDiagram = v && v.diagram ? v.diagram : String(v)
     const diagram = normalizeDiagram(rawDiagram)
-    // Skip generated voicings that contain open strings (keep jazz preference), but allow triads/defaults
-    const isGenerated = generated.includes(v)
-    if(isGenerated && diagram.split(/\s+/).includes('0')) continue
+    // Skip any voicings that contain open strings (user requested no open chords)
+    if(diagram.split(/\s+/).includes('0')) continue
     if(!seen.has(diagram)){
       seen.add(diagram)
       merged.push(Object.assign({}, v, {diagram}))
@@ -224,7 +246,7 @@ export function getOpenVoicings(root, type='maj7'){
 }
 
 // ---------------------- voicing generator ----------------------
-const STRING_OPEN = ['E','A','D','G','B','E']
+export const STRING_OPEN = ['E','A','D','G','B','E']
 
 function noteIndex(note){
   return SEMITONES.indexOf(note)
@@ -297,6 +319,22 @@ function scoreVoicing(v, chordNotes, root, type){
   let score = fingers * 5 + avgFret * 2 + span * 2 - contiguousScore * 5
   // penalize missing third strongly for most chords (except dim where third is ambiguous)
   if(!hasThird && !type.startsWith('dim')) score += 50
+
+  // Favor voicings that place the bass on the 6th or 5th string (indices 0 or 1)
+  // Lower score is better, so subtract a small bonus when bass is on a low string.
+  const bassIdx = v.findIndex(x => x !== 'x' && x !== '0')
+  if(bassIdx !== -1){
+    if(bassIdx === 0) score -= 8 // strong preference for 6th string bass
+    else if(bassIdx === 1) score -= 4 // milder preference for 5th string bass
+    // additionally, prefer voicings where the bass note is the tonic (1) or the fifth (5)
+    const bassFret = v[bassIdx]
+    if(bassFret && bassFret !== 'x' && bassFret !== '0'){
+      const bassNote = noteAt(STRING_OPEN[bassIdx], parseInt(bassFret,10))
+      const deg = getDegreeLabel(root, bassNote)
+      if(deg === 'T') score -= 12
+      else if(deg === '5') score -= 8
+    }
+  }
   return score
 }
 

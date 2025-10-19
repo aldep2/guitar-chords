@@ -55,12 +55,16 @@ export default function App(){
 
       <section className="panel">
         <h2>Voicings suggérés</h2>
-        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        <div className="voicings-grid">
           {voicings.map((v, i)=> (
             <div key={i} className="voicing">
-              <ChordDiagram diagram={v.diagram} start={v.baseFret || v.start} />
-              <div className="caption">{v.label} {v.baseFret ? `(base ${v.baseFret})` : ''} {v.playable ? '✅' : '⚠️'}</div>
-              {v.fingering ? <div className="caption">Doigtés (6→1): {v.fingering.map(x=> x===null ? '-' : x).join(' ')}</div> : null}
+              <div style={{textAlign:'center', width: '100%'}}>
+                  <div className="caption" style={{marginBottom:8}}>{v.label} {v.baseFret ? `(base ${v.baseFret})` : ''} {v.playable ? '✅' : ''}</div>
+                <div style={{display:'flex',justifyContent:'center'}}>
+                  <ChordDiagram diagram={v.diagram} start={v.baseFret || v.start} orientation="horizontal" root={root} size={1.25} />
+                </div>
+                {v.fingering ? <div className="caption">Doigtés (6→1): {v.fingering.map(x=> x===null ? '-' : x).join(' ')}</div> : null}
+              </div>
             </div>
           ))}
         </div>

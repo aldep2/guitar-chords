@@ -1,9 +1,28 @@
 body{ font-family: system-ui, Arial, sans-serif; padding: 24px; background:#f7f7fb; color:#111}
-.container{ max-width:800px; margin:0 auto }
+.container{ max-width:1100px; margin:0 auto }
 .panel{ background:white; padding:12px; border-radius:8px; margin-top:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .voicing{ display:flex; align-items:center; gap:12px; padding:8px 0 }
-.voicing svg{ width:200px; height:240px }
+.voicing svg{ width:260px; height:320px }
+.voicing .caption{ text-align:center }
 .caption{ color:#555; font-size:13px }
 .caption.ok{ color: green }
 .caption.warn{ color: orange }
 .controls select{ padding:6px; margin-left:6px }
+
+/* grid for voicings: 2 columns on wide screens, 1 column on small screens */
+.voicings-grid{
+	display:grid;
+	grid-template-columns: 1fr 1fr;
+	gap:18px 28px;
+}
+.voicings-grid .voicing{ align-items:flex-start }
+
+@media (max-width:900px){
+	.voicings-grid{ grid-template-columns: 1fr }
+	.voicing{ flex-direction:row; gap:8px }
+	.voicing svg{ width:200px; height:260px }
+}
+
+@media (min-width:1200px){
+	.voicing svg{ width:320px; height:380px }
+}
