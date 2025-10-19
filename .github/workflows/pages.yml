@@ -1,5 +1,4 @@
 name: Build and Deploy to GitHub Pages
-name: Build and Deploy to GitHub Pages
 
 on:
   push:
@@ -16,11 +15,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # plugin-react requires Node >= 20.19.0 (or >=22.12.0)
           node-version: '20.19.0'
 
       - name: Install dependencies
-        # use npm install when no package-lock.json is present on the runner
         run: npm install --no-audit --prefer-offline
 
       - name: Build
@@ -59,7 +56,7 @@ jobs:
           name: pages-dist
           path: pages-dist
 
-      - name: Deploy to GitHub Pages (gh-pages branch)
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
@@ -67,4 +64,3 @@ jobs:
           clean: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
