@@ -50,6 +50,8 @@ const FORMULAS = {
   'maj7': [0,4,7,11],
   'm7': [0,3,7,10],
   '7': [0,4,7,10],
+  '6': [0,4,7,9],
+  'm6': [0,3,7,9],
   '9': [0,4,7,10,14],
   '13': [0,4,7,10,14,21],
   'dim7': [0,3,6,9]
@@ -71,6 +73,8 @@ const VOICING_INTERVALS = {
   'm13': [0,3,10,21],
   'm7b5': [0,3,6,10],
   'dim7': [0,3,6,9],
+  '6': [0,4,7,9],
+  'm6': [0,3,7,9],
   'aug': [0,4,8,11]
 }
 
@@ -121,6 +125,11 @@ const DEFAULT_VOICINGS = {
   'm': {
     'C': [{label:'Cm (open)', diagram:'x 3 5 5 4 3'}]
   }
+}
+
+// Add common 6th voicings (examples)
+DEFAULT_VOICINGS['6'] = {
+  'C': [{ label: 'C6 (open)', diagram: 'x 3 2 2 1 0' }]
 }
 
 // Common triads (major) for all 12 roots
@@ -424,3 +433,46 @@ export function generateVoicings(root, type='maj7', opts={maxFret:12, maxSpan:4,
 function accIndexMap(acc, val){
   return acc.indexOf(val)
 }
+
+// Ensure DEFAULT_VOICINGS contains entries for 6 and m6 for all roots.
+// If a manual default exists (e.g. C6 already present), we keep it. Otherwise
+// generate a few candidate voicings via generateVoicings and use them as defaults.
+;(function ensureSixthVoicings(){
+  try{
+    const types = ['6','m6']
+    for(const t of types){
+      DEFAULT_VOICINGS[t] = DEFAULT_VOICINGS[t] || {}
+      for(const root of SEMITONES){
+        if(!DEFAULT_VOICINGS[t][root]){
+          const gens = generateVoicings(root, t, {maxVoicings:3, maxSpan:4})
+          // store up to 3 generated voicings as defaults
+          DEFAULT_VOICINGS[t][root] = gens.slice(0,3).map(g => ({ label: g.label, diagram: g.diagram }))
+        }
+      }
+    }
+  }catch(e){
+    // if generation fails during import for any reason, fail silently to avoid breaking app
+    console.warn('Could not auto-populate 6/m6 defaults:', e && e.message)
+  }
+})()
+
+// Populate DEFAULT_VOICINGS for any chord types that don't have manual defaults.
+;(function ensureAllVoicings(){
+  try{
+    // collect types from formulas and voicing intervals
+    const types = new Set([...Object.keys(FORMULAS), ...Object.keys(VOICING_INTERVALS)])
+    for(const t of types){
+      DEFAULT_VOICINGS[t] = DEFAULT_VOICINGS[t] || {}
+      for(const root of SEMITONES){
+        if(!DEFAULT_VOICINGS[t][root]){
+          const gens = generateVoicings(root, t, {maxVoicings:3, maxSpan:4})
+          if(gens && gens.length){
+            DEFAULT_VOICINGS[t][root] = gens.slice(0,3).map(g => ({ label: g.label, diagram: g.diagram }))
+          }
+        }
+      }
+    }
+  }catch(e){
+    console.warn('Could not auto-populate defaults for all voicings:', e && e.message)
+  }
+})()

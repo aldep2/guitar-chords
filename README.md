@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Le site sera disponible sur http://localhost:5173 par défaut.
+Le site sera disponible sur http://localhost:5175 (Vite) pendant le développement.
 
 Notes :
 
@@ -33,7 +33,10 @@ Build local (avec base pour Pages si nécessaire) :
 # pour tester localement la version qui sera publiée sous /guitar-chords/
 export BASE_PATH=/guitar-chords/
 npm run build
-# puis servir dist/ (par ex. serve ou http-server)
+# servir le contenu de dist/ (par ex. avec 'npx serve dist' ou 'npx http-server dist')
+npx serve dist
 ```
 
-Si tu veux que la base soit `/` (site racine), supprime ou ajuste la variable `BASE_PATH` dans `.github/workflows/pages.yml`.
+Remarque: `vite.config.js` utilise maintenant une base relative par défaut (`'./'`) ce qui permet au site construit de fonctionner
+quand il est servi depuis une sous‑chemin (comme GitHub Pages) ou depuis le système de fichiers. Le workflow CI définit toujours `BASE_PATH`
+sur `/guitar-chords/` pour générer les liens absolus si nécessaire.

@@ -10,6 +10,8 @@ const TYPES = [
   {key: 'm7', label: 'm7'},
   {key: '7', label: '7 (dom7)'},
   {key: '9', label: '9'},
+  {key: '6', label: '6'},
+  {key: 'm6', label: 'm6'},
   {key: 'maj9', label: 'maj9'},
   {key: '11', label: '11'},
   {key: '13', label: '13'},
